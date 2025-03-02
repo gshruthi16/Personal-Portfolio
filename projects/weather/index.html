@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+        }
+
+        .search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.1em;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            color: #0083b0;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #0083b0;
+            color: white;
+        }
+
+        .weather {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .weather.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .city {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .temperature {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .description {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            text-transform: capitalize;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .detail-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .temperature {
+                font-size: 3em;
+            }
+
+            .description {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search">
+            <input type="text" placeholder="Enter city name" id="cityInput">
+            <button onclick="getWeather()">Search</button>
+        </div>
+        <div class="weather" id="weather">
+            <h2 class="city"></h2>
+            <div class="temperature"></div>
+            <div class="description"></div>
+            <div class="details">
+                <div class="detail-item">
+                    <span class="detail-label">Feels Like</span>
+                    <span class="detail-value" id="feels-like"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Humidity</span>
+                    <span class="detail-value" id="humidity"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Wind Speed</span>
+                    <span class="detail-value" id="wind-speed"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = 'YOUR_API_KEY'; // Replace with your OpenWeatherMap API key
+        const weatherDiv = document.getElementById('weather');
+        const cityInput = document.getElementById('cityInput');
+
+        cityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') getWeather();
+        });
+
+        async function getWeather() {
+            const city = cityInput.value.trim();
+            if (!city) return;
+
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
+                );
+                const data = await response.json();
+
+                if (data.cod === '404') {
+                    showError('City not found. Please try again.');
+                    return;
+                }
+
+                updateWeatherUI(data);
+            } catch (error) {
+                showError('Something went wrong. Please try again later.');
+            }
+        }
+
+        function updateWeatherUI(data) {
+            weatherDiv.querySelector('.city').textContent = `${data.name}, ${data.sys.country}`;
+            weatherDiv.querySelector('.temperature').textContent = `${Math.round(data.main.temp)}°C`;
+            weatherDiv.querySelector('.description').textContent = data.weather[0].description;
+            
+            document.getElementById('feels-like').textContent = `${Math.round(data.main.feels_like)}°C`;
+            document.getElementById('humidity').textContent = `${data.main.humidity}%`;
+            document.getElementById('wind-speed').textContent = `${data.wind.speed} m/s`;
+
+            weatherDiv.classList.add('show');
+            removeError();
+        }
+
+        function showError(message) {
+            removeError();
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            weatherDiv.classList.remove('show');
+            document.querySelector('.container').appendChild(errorDiv);
+        }
+
+        function removeError() {
+            const errorDiv = document.querySelector('.error');
+            if (errorDiv) errorDiv.remove();
+        }
+    </script>
+</body>
+</html> 

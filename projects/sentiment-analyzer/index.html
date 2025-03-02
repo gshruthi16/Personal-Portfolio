@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Sentiment Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .result-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sentiment-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .score-label {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .score-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .positive { color: #4CAF50; }
+        .neutral { color: #2196F3; }
+        .negative { color: #f44336; }
+
+        .emotion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .emotion-tag {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: white;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .joy { background: #4CAF50; }
+        .sadness { background: #2196F3; }
+        .anger { background: #f44336; }
+        .fear { background: #9C27B0; }
+        .surprise { background: #FF9800; }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-time Sentiment Analyzer</h1>
+        
+        <div class="input-section">
+            <textarea id="text-input" placeholder="Type or paste your text here for real-time sentiment analysis..."></textarea>
+        </div>
+
+        <div class="result-section">
+            <div class="sentiment-score">
+                <span class="score-label">Sentiment Score:</span>
+                <span class="score-value" id="sentiment-value">Neutral (0.0)</span>
+            </div>
+            <div class="emotion-tags" id="emotion-tags"></div>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('text-input');
+        const sentimentValue = document.getElementById('sentiment-value');
+        const emotionTags = document.getElementById('emotion-tags');
+
+        // Simple sentiment analysis based on keyword matching
+        const sentimentKeywords = {
+            positive: ['good', 'great', 'awesome', 'excellent', 'happy', 'love', 'wonderful', 'fantastic'],
+            negative: ['bad', 'terrible', 'awful', 'horrible', 'sad', 'hate', 'poor', 'disappointing'],
+            emotions: {
+                joy: ['happy', 'excited', 'delighted', 'joyful'],
+                sadness: ['sad', 'depressed', 'unhappy', 'miserable'],
+                anger: ['angry', 'furious', 'mad', 'rage'],
+                fear: ['scared', 'afraid', 'terrified', 'fearful'],
+                surprise: ['surprised', 'amazed', 'astonished', 'shocked']
+            }
+        };
+
+        function analyzeSentiment(text) {
+            const words = text.toLowerCase().split(/\s+/);
+            let score = 0;
+            let emotions = new Set();
+
+            words.forEach(word => {
+                if (sentimentKeywords.positive.includes(word)) score += 1;
+                if (sentimentKeywords.negative.includes(word)) score -= 1;
+
+                // Check for emotions
+                Object.entries(sentimentKeywords.emotions).forEach(([emotion, keywords]) => {
+                    if (keywords.includes(word)) emotions.add(emotion);
+                });
+            });
+
+            // Normalize score between -1 and 1
+            const normalizedScore = score / Math.max(words.length, 1);
+            return { score: normalizedScore, emotions: Array.from(emotions) };
+        }
+
+        function updateUI(analysis) {
+            // Update sentiment score
+            let sentiment;
+            if (analysis.score > 0.1) {
+                sentiment = `Positive (${analysis.score.toFixed(2)})`;
+                sentimentValue.className = 'score-value positive';
+            } else if (analysis.score < -0.1) {
+                sentiment = `Negative (${analysis.score.toFixed(2)})`;
+                sentimentValue.className = 'score-value negative';
+            } else {
+                sentiment = `Neutral (${analysis.score.toFixed(2)})`;
+                sentimentValue.className = 'score-value neutral';
+            }
+            sentimentValue.textContent = sentiment;
+
+            // Update emotion tags
+            emotionTags.innerHTML = analysis.emotions
+                .map(emotion => `<span class="emotion-tag ${emotion}">${emotion}</span>`)
+                .join('');
+        }
+
+        // Real-time analysis
+        let analysisTimeout;
+        textInput.addEventListener('input', (e) => {
+            clearTimeout(analysisTimeout);
+            analysisTimeout = setTimeout(() => {
+                const analysis = analyzeSentiment(e.target.value);
+                updateUI(analysis);
+            }, 300);
+        });
+    </script>
+</body>
+</html> 

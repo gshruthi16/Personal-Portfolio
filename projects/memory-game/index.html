@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Card Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats {
+            color: white;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .game {
+            width: 440px;
+            height: 440px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            transform-style: preserve-3d;
+            perspective: 500px;
+        }
+
+        .card {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transform: scale(1);
+            transition: transform 0.5s;
+        }
+
+        .card:hover {
+            transform: scale(0.97);
+        }
+
+        .card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .front, .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            background: white;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s;
+        }
+
+        .front {
+            background: #2c3e50;
+            transform: rotateY(180deg);
+        }
+
+        .back {
+            background: white;
+            font-size: 3em;
+            color: #2c3e50;
+        }
+
+        .matched {
+            background: #27ae60;
+            pointer-events: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #2c3e50;
+            color: white;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .celebrate {
+            animation: celebrate 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="stats">
+            <p>Moves: <span id="moves">0</span></p>
+            <p>Time: <span id="time">0:00</span></p>
+        </div>
+        <div class="game" id="game"></div>
+        <button onclick="resetGame()">New Game</button>
+    </div>
+
+    <script>
+        const game = document.getElementById('game');
+        const movesDisplay = document.getElementById('moves');
+        const timeDisplay = document.getElementById('time');
+        let cards = [];
+        let moves = 0;
+        let matches = 0;
+        let firstCard = null;
+        let secondCard = null;
+        let canFlip = true;
+        let timer = null;
+        let seconds = 0;
+
+        const emojis = ['🎮', '🎲', '🎯', '🎨', '🎭', '🎪', '🎟️', '🎬'];
+        const deck = [...emojis, ...emojis];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function createCard(emoji) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="front">${emoji}</div>
+                <div class="back">?</div>
+            `;
+            card.addEventListener('click', () => flipCard(card));
+            return card;
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                seconds++;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                timeDisplay.textContent = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function flipCard(card) {
+            if (!canFlip || card.classList.contains('flip')) return;
+
+            card.classList.add('flip');
+
+            if (!firstCard) {
+                firstCard = card;
+                if (!timer) startTimer();
+            } else {
+                secondCard = card;
+                canFlip = false;
+                moves++;
+                movesDisplay.textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const match = firstCard.querySelector('.front').textContent === 
+                         secondCard.querySelector('.front').textContent;
+
+            if (match) {
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                matches++;
+                if (matches === emojis.length) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        alert(`Congratulations! You won in ${moves} moves and ${timeDisplay.textContent}!`);
+                        document.querySelector('.container').classList.add('celebrate');
+                    }, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    firstCard.classList.remove('flip');
+                    secondCard.classList.remove('flip');
+                }, 1000);
+            }
+
+            setTimeout(() => {
+                firstCard = null;
+                secondCard = null;
+                canFlip = true;
+            }, 1000);
+        }
+
+        function resetGame() {
+            game.innerHTML = '';
+            cards = [];
+            moves = 0;
+            matches = 0;
+            firstCard = null;
+            secondCard = null;
+            canFlip = true;
+            clearInterval(timer);
+            timer = null;
+            seconds = 0;
+            movesDisplay.textContent = '0';
+            timeDisplay.textContent = '0:00';
+            document.querySelector('.container').classList.remove('celebrate');
+            initGame();
+        }
+
+        function initGame() {
+            const shuffledDeck = shuffle(deck);
+            shuffledDeck.forEach(emoji => {
+                const card = createCard(emoji);
+                cards.push(card);
+                game.appendChild(card);
+            });
+        }
+
+        initGame();
+    </script>
+</body>
+</html> 

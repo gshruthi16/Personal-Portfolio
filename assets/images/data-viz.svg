@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="800" height="600" fill="url(#gradient1)" rx="20"/>
+    
+    <!-- Chart Grid Lines -->
+    <line x1="100" y1="500" x2="700" y2="500" stroke="white" stroke-width="2" stroke-opacity="0.3"/>
+    <line x1="100" y1="400" x2="700" y2="400" stroke="white" stroke-width="2" stroke-opacity="0.3"/>
+    <line x1="100" y1="300" x2="700" y2="300" stroke="white" stroke-width="2" stroke-opacity="0.3"/>
+    <line x1="100" y1="200" x2="700" y2="200" stroke="white" stroke-width="2" stroke-opacity="0.3"/>
+    
+    <!-- Bar Chart -->
+    <rect x="150" y="300" width="40" height="200" fill="#FF6B6B" rx="5"/>
+    <rect x="250" y="200" width="40" height="300" fill="#4ECDC4" rx="5"/>
+    <rect x="350" y="350" width="40" height="150" fill="#45B7D1" rx="5"/>
+    <rect x="450" y="250" width="40" height="250" fill="#96CEB4" rx="5"/>
+    
+    <!-- Line Chart -->
+    <path d="M150 400 Q250 200 350 350 T550 250" stroke="#FFE66D" stroke-width="4" fill="none"/>
+    
+    <!-- Data Points -->
+    <circle cx="150" cy="400" r="8" fill="#FFE66D"/>
+    <circle cx="250" cy="200" r="8" fill="#FFE66D"/>
+    <circle cx="350" cy="350" r="8" fill="#FFE66D"/>
+    <circle cx="450" cy="300" r="8" fill="#FFE66D"/>
+    <circle cx="550" cy="250" r="8" fill="#FFE66D"/>
+    
+    <!-- Pie Chart -->
+    <path d="M650 200 A50 50 0 0 1 700 250" stroke="#FF6B6B" stroke-width="20"/>
+    <path d="M700 250 A50 50 0 0 1 650 300" stroke="#4ECDC4" stroke-width="20"/>
+    <path d="M650 300 A50 50 0 0 1 600 250" stroke="#45B7D1" stroke-width="20"/>
+    <path d="M600 250 A50 50 0 0 1 650 200" stroke="#96CEB4" stroke-width="20"/>
+    
+    <!-- Decorative Elements -->
+    <circle cx="100" cy="100" r="20" fill="white" opacity="0.1"/>
+    <circle cx="700" cy="500" r="15" fill="white" opacity="0.1"/>
+    <circle cx="400" cy="50" r="10" fill="white" opacity="0.1"/>
+    
+    <!-- Gradients -->
+    <defs>
+        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a2a6c"/>
+            <stop offset="50%" style="stop-color:#b21f1f"/>
+            <stop offset="100%" style="stop-color:#fdbb2d"/>
+        </linearGradient>
+    </defs>
+</svg> 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="400" cy="300" r="250" fill="url(#gradient1)" opacity="0.9"/>
+    
+    <!-- Emoji Face Container -->
+    <circle cx="400" cy="300" r="200" fill="url(#gradient2)" stroke="white" stroke-width="8"/>
+    
+    <!-- Eyes -->
+    <circle cx="320" cy="250" r="25" fill="white"/>
+    <circle cx="480" cy="250" r="25" fill="white"/>
+    
+    <!-- Smile Line -->
+    <path d="M300 350 Q400 450 500 350" stroke="white" stroke-width="12" stroke-linecap="round" fill="none"/>
+    
+    <!-- Sentiment Bars -->
+    <rect x="600" y="200" width="30" height="120" rx="15" fill="#4CAF50" opacity="0.8"/>
+    <rect x="600" y="340" width="30" height="80" rx="15" fill="#2196F3" opacity="0.8"/>
+    <rect x="600" y="440" width="30" height="60" rx="15" fill="#f44336" opacity="0.8"/>
+    
+    <!-- Text Analysis Lines -->
+    <line x1="100" y1="200" x2="200" y2="200" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    <line x1="120" y1="250" x2="180" y2="250" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    <line x1="140" y1="300" x2="160" y2="300" stroke="white" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Decorative Circles -->
+    <circle cx="150" cy="400" r="10" fill="white" opacity="0.6"/>
+    <circle cx="650" cy="150" r="15" fill="white" opacity="0.6"/>
+    <circle cx="200" cy="150" r="8" fill="white" opacity="0.6"/>
+    
+    <!-- Gradients -->
+    <defs>
+        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#667eea"/>
+            <stop offset="100%" style="stop-color:#764ba2"/>
+        </linearGradient>
+        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#764ba2"/>
+            <stop offset="100%" style="stop-color:#667eea"/>
+        </linearGradient>
+    </defs>
+</svg> 
