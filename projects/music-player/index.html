@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        }
+
+        .player {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .album-art {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .rotating {
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .song-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .song-title {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .artist {
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            width: 0;
+            height: 100%;
+            background: white;
+            border-radius: 5px;
+            transition: width 0.1s linear;
+        }
+
+        .time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.5em;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .play-btn {
+            font-size: 2em;
+            background: white;
+            color: #ff6b6b;
+        }
+
+        .play-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .playlist {
+            margin-top: 30px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .playlist::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .playlist::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .playlist-item {
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .playlist-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .playlist-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .playlist-item-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .playlist-item-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-item-artist {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="player">
+        <div class="album-art">
+            <img src="https://source.unsplash.com/random/500x500?music" alt="Album Art" id="albumArt">
+        </div>
+        <div class="song-info">
+            <div class="song-title">Beautiful Now</div>
+            <div class="artist">Zedd ft. Jon Bellion</div>
+        </div>
+        <div class="progress-bar" id="progressBar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="time">
+            <span id="currentTime">0:00</span>
+            <span id="duration">3:45</span>
+        </div>
+        <div class="controls">
+            <button class="control-btn" onclick="previousSong()">⏮</button>
+            <button class="control-btn play-btn" onclick="togglePlay()" id="playBtn">▶</button>
+            <button class="control-btn" onclick="nextSong()">⏭</button>
+        </div>
+        <div class="playlist">
+            <div class="playlist-item active">
+                <img src="https://source.unsplash.com/random/100x100?music" alt="Song 1">
+                <div class="playlist-item-info">
+                    <div class="playlist-item-title">Beautiful Now</div>
+                    <div class="playlist-item-artist">Zedd ft. Jon Bellion</div>
+                </div>
+            </div>
+            <div class="playlist-item">
+                <img src="https://source.unsplash.com/random/100x100?concert" alt="Song 2">
+                <div class="playlist-item-info">
+                    <div class="playlist-item-title">Stay With Me</div>
+                    <div class="playlist-item-artist">Calvin Harris</div>
+                </div>
+            </div>
+            <div class="playlist-item">
+                <img src="https://source.unsplash.com/random/100x100?band" alt="Song 3">
+                <div class="playlist-item-info">
+                    <div class="playlist-item-title">Clarity</div>
+                    <div class="playlist-item-artist">Zedd ft. Foxes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const albumArt = document.getElementById('albumArt');
+        const playBtn = document.getElementById('playBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progress = document.getElementById('progress');
+        const currentTimeSpan = document.getElementById('currentTime');
+        let isPlaying = false;
+        let currentTime = 0;
+        const duration = 225; // 3:45 in seconds
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            playBtn.textContent = isPlaying ? '⏸' : '▶';
+            albumArt.classList.toggle('rotating', isPlaying);
+
+            if (isPlaying) {
+                startProgress();
+            } else {
+                stopProgress();
+            }
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        let progressInterval;
+
+        function startProgress() {
+            progressInterval = setInterval(() => {
+                currentTime = (currentTime + 1) % duration;
+                updateProgress();
+            }, 1000);
+        }
+
+        function stopProgress() {
+            clearInterval(progressInterval);
+        }
+
+        function updateProgress() {
+            const percentage = (currentTime / duration) * 100;
+            progress.style.width = `${percentage}%`;
+            currentTimeSpan.textContent = formatTime(currentTime);
+
+            if (currentTime >= duration) {
+                nextSong();
+            }
+        }
+
+        progressBar.addEventListener('click', (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const percentage = (e.clientX - rect.left) / rect.width;
+            currentTime = Math.floor(percentage * duration);
+            updateProgress();
+        });
+
+        function previousSong() {
+            currentTime = 0;
+            updateProgress();
+            if (isPlaying) {
+                stopProgress();
+                startProgress();
+            }
+        }
+
+        function nextSong() {
+            currentTime = 0;
+            updateProgress();
+            if (isPlaying) {
+                stopProgress();
+                startProgress();
+            }
+        }
+
+        // Playlist item click handler
+        document.querySelectorAll('.playlist-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.playlist-item.active').classList.remove('active');
+                item.classList.add('active');
+                
+                const title = item.querySelector('.playlist-item-title').textContent;
+                const artist = item.querySelector('.playlist-item-artist').textContent;
+                const img = item.querySelector('img').src;
+                
+                document.querySelector('.song-title').textContent = title;
+                document.querySelector('.artist').textContent = artist;
+                albumArt.src = img.replace('100x100', '500x500');
+                
+                currentTime = 0;
+                updateProgress();
+                if (!isPlaying) {
+                    togglePlay();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

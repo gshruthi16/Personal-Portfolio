@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #1a1a1a, #2c2c2c);
+        }
+
+        .clock {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px 50px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .time {
+            font-size: 80px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            letter-spacing: 3px;
+        }
+
+        .date {
+            font-size: 24px;
+            color: #ddd;
+            text-align: center;
+            margin-top: 10px;
+            letter-spacing: 2px;
+        }
+
+        .seconds {
+            font-size: 40px;
+            vertical-align: top;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .time {
+                font-size: 60px;
+            }
+            .seconds {
+                font-size: 30px;
+            }
+            .date {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div class="time" id="time">00:00<span class="seconds">00</span></div>
+        <div class="date" id="date">Monday, January 1</div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const time = document.getElementById('time');
+            const dateDisplay = document.getElementById('date');
+
+            // Format time
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            // Format date
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const day = days[now.getDay()];
+            const month = months[now.getMonth()];
+            const date = now.getDate();
+
+            // Update DOM
+            time.innerHTML = `${hours}:${minutes}<span class="seconds">${seconds}</span>`;
+            dateDisplay.textContent = `${day}, ${month} ${date}`;
+        }
+
+        // Update clock immediately and then every second
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="calcGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A00E0"/>
+      <stop offset="100%" style="stop-color:#8E2DE2"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Calculator body -->
+  <rect x="200" y="100" width="400" height="400" rx="20" fill="url(#calcGradient)" />
+  
+  <!-- Calculator display -->
+  <rect x="220" y="120" width="360" height="80" rx="10" fill="#2A2A2A"/>
+  <rect x="230" y="130" width="340" height="60" rx="5" fill="#4CAF50"/>
+  
+  <!-- Calculator buttons -->
+  <g fill="#ffffff" opacity="0.9">
+    <!-- Row 1 -->
+    <rect x="220" y="220" width="80" height="60" rx="10"/>
+    <rect x="320" y="220" width="80" height="60" rx="10"/>
+    <rect x="420" y="220" width="80" height="60" rx="10"/>
+    <rect x="520" y="220" width="80" height="60" rx="10"/>
+    
+    <!-- Row 2 -->
+    <rect x="220" y="300" width="80" height="60" rx="10"/>
+    <rect x="320" y="300" width="80" height="60" rx="10"/>
+    <rect x="420" y="300" width="80" height="60" rx="10"/>
+    
+    <!-- Row 3 -->
+    <rect x="220" y="380" width="80" height="60" rx="10"/>
+    <rect x="320" y="380" width="80" height="60" rx="10"/>
+    <rect x="420" y="380" width="80" height="60" rx="10"/>
+  </g>
+</svg> 
